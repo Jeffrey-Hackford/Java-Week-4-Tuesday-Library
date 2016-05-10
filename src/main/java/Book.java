@@ -21,7 +21,7 @@ public class Book {
   }
 
   public static List<Book> all() {
-    String sql = "SELECT title FROM books";
+    String sql = "SELECT * FROM books";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql).executeAndFetch(Book.class);
     }
@@ -40,7 +40,7 @@ public class Book {
   public void save() {
     try(Connection con = DB.sql2o.open()) {
       String sql = "INSERT INTO books (title) VALUES (:title)";
-      con.createQuery(sql, true)
+      this.id = (int) con.createQuery(sql, true)
       .addParameter("title", this.title)
       .executeUpdate()
       .getKey();
@@ -54,6 +54,36 @@ public class Book {
       .addParameter("id", id)
       .executeAndFetchFirst(Book.class);
       return book;
+    }
+  }
+
+  public void addAuthor(Author author) {
+    try (Connection con = DB.sql2o.open()){
+      String sql = "INSERT INTO authors_books (author_id, book_id) VALUES (:author_id, :book_id)";
+      con.createQuery(sql)
+      .addParameter("author_id", author.getId())
+      .addParameter("book_id", this.getId())
+      .executeUpdate();
+    }
+  }
+
+  public List<Author> getAuthors() {
+    try(Connection con = DB.sql2o.open()){
+      String joinQuery = "SELECT author_id FROM authors_books WHERE book_id = :book_id";
+      List<Integer> authorIds = con.createQuery(joinQuery)
+        .addParameter("book_id", this.getId())
+        .executeAndFetch(Integer.class);
+
+      List<Author> authors = new ArrayList<Author>();
+
+      for (Integer authorId : authorIds) {
+        String bookQuery = "Select * From authors WHERE id = :authorId";
+        Author author = con.createQuery(bookQuery)
+          .addParameter("authorId", authorId)
+          .executeAndFetchFirst(Author.class);
+        authors.add(author);
+      }
+      return authors;
     }
   }
 }

@@ -46,4 +46,27 @@ public class BookTest {
     Book savedBook = Book.all().get(0);
     assertEquals(myBook.getId(), savedBook.getId());
   }
+
+  @Test
+  public void addAuthor_addsAuthorToBook() {
+    Author myAuthor = new Author("Walt Whitman");
+    myAuthor.save();
+    Book myBook = new Book("Leaves of Grass");
+    myBook.save();
+    myBook.addAuthor(myAuthor);
+    Author savedAuthor = myBook.getAuthors().get(0);
+    assertTrue(myAuthor.equals(savedAuthor));
+  }
+
+  @Test
+  public void getAuthors_returnsAllAuthors_List() {
+    Author myAuthor = new Author("JK Rowling");
+    myAuthor.save();
+    Book myBook = new Book("Harry Potter");
+    myBook.save();
+    myBook.addAuthor(myAuthor);
+    List savedAuthors = myBook.getAuthors();
+    assertEquals(1, savedAuthors.size());
+  }
+
 }
