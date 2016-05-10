@@ -1,0 +1,11 @@
+<h1>All Books</h1>
+
+  <ul>
+    #foreach ($book in $books)
+      <li><a href="/books/$book.getId()">$book.getName()</a></li>
+    #end
+  </ul>
+
+<a href="/">Add another Author</a>
+<br>
+<a href="/">Add a Book</a>
