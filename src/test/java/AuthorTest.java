@@ -33,4 +33,12 @@ public class AuthorTest {
     newAuthor.save();
     assertTrue(Author.all().get(0).equals(newAuthor));
   }
+
+  @Test
+  public void save_assignsIdToObject_int() {
+    Author newAuthor = new Author("Author 2");
+    newAuthor.save();
+    Author savedAuthor = Author.all().get(0);
+    assertEquals(newAuthor.getId(), savedAuthor.getId());
+  }
 }

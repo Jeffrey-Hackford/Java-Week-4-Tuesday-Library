@@ -14,6 +14,10 @@ public class Author {
     return name;
   }
 
+  public int getId() {
+    return id;
+  }
+
   public static List<Author> all() {
     String sql = "SELECT * FROM authors";
     try(Connection con = DB.sql2o.open()) {
@@ -34,10 +38,20 @@ public class Author {
   public void save() {
     try(Connection con = DB.sql2o.open()) {
       String sql = "INSERT INTO authors (name) VALUES (:name)";
-      con.createQuery(sql, true)
+      this.id = (int) con.createQuery(sql, true)
       .addParameter("name", this.name)
       .executeUpdate()
       .getKey();
+    }
+  }
+
+  public static Author find(int id) {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM authors WHERE id=:id";
+      Author author = con.createQuery(sql)
+      .addParameter("id", id)
+      .executeAndFetchFirst(Author.class);
+    return author;
     }
   }
 
